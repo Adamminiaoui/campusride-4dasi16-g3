@@ -68,15 +68,15 @@ Le projet comprend six microservices métier et un service commun de notificatio
 
 ![Architecture globale de CampusRide](Documentation/Diagrams/07-architecture-globale.png)
 
-| Microservice | Responsabilité | Port prévu | Base prévue |
-| --- | --- | --- | --- |
-| User | Comptes, authentification et rôles | 8081 | user_db |
-| Vehicle & Driver | Véhicules et validation des conducteurs | 8082 | vehicle_db |
-| Ride | Trajets et places disponibles | 8083 | ride_db |
-| Booking | Réservations et annulations | 8084 | booking_db |
-| Payment | Paiements simulés et remboursements | 8085 | payment_db |
-| Review | Avis et réputation | 8086 | review_db |
-| Notification | Notifications dans l’application | 8087 | notification_db |
+| Microservice | Responsabilité | Port prévu | Base prévue | Responsable |
+| --- | --- | --- | --- | --- |
+| User | Comptes, authentification et rôles | 8081 | user_db | Yesmine Chourou |
+| Vehicle & Driver | Véhicules et validation des conducteurs | 8082 | vehicle_db | Ines Mzoughi |
+| Ride | Trajets et places disponibles | 8083 | ride_db | Ahmed Aatrous |
+| Booking | Réservations et annulations | 8084 | booking_db | Adam Miniaoui |
+| Payment | Paiements simulés et remboursements | 8085 | payment_db | Aziz Soltani |
+| Review | Avis et réputation | 8086 | review_db | Amine Bel Haj |
+| Notification | Notifications dans l’application | 8087 | notification_db | Toute l’équipe |
 
 Technologies backend prévues : Java 17, Spring Boot 3, Maven, Spring Security, BCrypt, JWT et MySQL 8. Le frontend est prévu sur le port local 5500. Ces choix décrivent la cible de développement.
 
@@ -89,7 +89,7 @@ Technologies backend prévues : Java 17, Spring Boot 3, Maven, Spring Security, 
 
 ## Équipe et encadrement
 
-Équipe : Yesmine Chourou, Ines Mzoughi, Ahmed Aatrous, Adam Miniaoui, Aziz Soltani et Amine Bel Hadj.
+Équipe : Yesmine Chourou, Ines Mzoughi, Ahmed Aatrous, Adam Miniaoui, Aziz Soltani et Amine Bel Haj.
 
 Encadrant : M. Ghassen Hamouda.
 

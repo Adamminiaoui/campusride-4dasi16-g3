@@ -1,5 +1,7 @@
 # Payment Service
 
+**Responsable : Aziz Soltani.**
+
 Paiement simulé, remboursements et historique des transactions.
 
 Ce dossier initialise uniquement la structure du futur microservice. Il ne contient aucune implémentation ni configuration de lancement.

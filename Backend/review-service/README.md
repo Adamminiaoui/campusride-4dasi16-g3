@@ -1,5 +1,7 @@
 # Review Service
 
+**Responsable : Amine Bel Haj.**
+
 Avis, notes, réputation et signalements.
 
 Ce dossier initialise uniquement la structure du futur microservice. Il ne contient aucune implémentation ni configuration de lancement.

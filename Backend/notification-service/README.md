@@ -1,5 +1,7 @@
 # Notification Service
 
+**Responsable : Toute l’équipe.**
+
 Service commun de notifications enregistrées en base et affichées dans l'application.
 
 Ce dossier initialise uniquement la structure du futur microservice. Il ne contient aucune implémentation ni configuration de lancement.

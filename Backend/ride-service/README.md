@@ -1,5 +1,7 @@
 # Ride Service
 
+**Responsable : Ahmed Aatrous.**
+
 Publication, recherche et gestion des trajets et des places.
 
 Ce dossier initialise uniquement la structure du futur microservice. Il ne contient aucune implémentation ni configuration de lancement.

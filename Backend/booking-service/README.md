@@ -1,5 +1,7 @@
 # Booking Service
 
+**Responsable : Adam Miniaoui.**
+
 Réservations, annulations et coordination des places et du paiement.
 
 Ce dossier initialise uniquement la structure du futur microservice. Il ne contient aucune implémentation ni configuration de lancement.

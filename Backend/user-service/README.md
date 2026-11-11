@@ -1,5 +1,7 @@
 # User Service
 
+**Responsable : Yesmine Chourou.**
+
 Inscription, connexion, profils, rôles et statut des comptes.
 
 Ce dossier initialise uniquement la structure du futur microservice. Il ne contient aucune implémentation ni configuration de lancement.
