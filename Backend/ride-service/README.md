@@ -1,0 +1,14 @@
+# Ride Service
+
+Publication, recherche et gestion des trajets et des places.
+
+Ce dossier initialise uniquement la structure du futur microservice. Il ne contient aucune implémentation ni configuration de lancement.
+
+- Technologies prévues : Java 17, Spring Boot 3, Maven et MySQL 8.
+- Port prévu : 8083.
+- Base MySQL prévue : `ride_db`.
+- Sources Java : `src/main/java/tn/campusride/ride/`.
+- Ressources : `src/main/resources/`.
+- Tests futurs : `src/test/java/tn/campusride/ride/`.
+
+La conception est décrite dans le [dossier technique](../../Documentation/CampusRide_Rapport_technique_v3.docx).

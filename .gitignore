@@ -1,0 +1,25 @@
+# IDE et fichiers locaux
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Java / Maven
+target/
+*.class
+*.log
+
+# Configuration locale et secrets
+.env
+.env.*
+!.env.example
+application-local.properties
+application-local.yml
+application-local.yaml
+
+# Eventuelles dependances et sorties frontend
+node_modules/
+dist/
+coverage/
