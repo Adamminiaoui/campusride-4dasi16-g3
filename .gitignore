@@ -8,6 +8,7 @@ Desktop.ini
 
 # Java / Maven
 target/
+out/
 *.class
 *.log
 

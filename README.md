@@ -6,13 +6,15 @@ CampusRide vise à mettre en relation des étudiants conducteurs et passagers po
 
 ## État du projet
 
-Ce dépôt initialise uniquement la structure du projet et rassemble les documents de conception. Les dossiers de développement sont prêts à être complétés ; aucune logique métier, application exécutable ou configuration de base de données n’est encore implémentée. Il n’y a donc pas de commande de compilation ou de lancement à cette étape.
+Ce dépôt initialise la structure Maven du projet et rassemble les documents de conception. Les sept microservices sont des modules Maven Java ciblant Java 17, prêts à être complétés. Aucune logique métier, application exécutable ou configuration de base de données n’est encore implémentée. La compilation de la structure est disponible ; le lancement d’une application sera ajouté pendant le développement.
 
 ## Organisation du dépôt
 
 ```text
 campusride-4dasi16-g3/
+├── pom.xml                       (parent Maven)
 ├── Backend/
+│   ├── pom.xml                   (agrégateur des 7 microservices)
 │   ├── user-service/
 │   ├── vehicle-driver-service/
 │   ├── ride-service/
@@ -39,6 +41,26 @@ campusride-4dasi16-g3/
 ```
 
 Les fichiers `.gitkeep` permettent à Git de conserver les dossiers encore vides.
+
+Chaque dossier de microservice contient son propre `pom.xml` et les répertoires Maven `src/main/java`, `src/main/resources` et `src/test/java`. Le frontend et la documentation restent des dossiers du dépôt, hors du build Java.
+
+## Vérifier la structure Maven
+
+Prérequis : un JDK 17 ou supérieur et Maven 3.9 ou supérieur.
+
+Depuis la racine du dépôt :
+
+```bash
+mvn clean verify
+```
+
+Pour construire un seul microservice et ses parents :
+
+```bash
+mvn -pl Backend/user-service -am clean verify
+```
+
+Les modules produisent des JAR de structure dans leurs dossiers `target/`. Ils ne contiennent pas encore de code applicatif ni de tests. Les dépendances Spring Boot seront ajoutées lors de l’implémentation des services.
 
 ## Architecture prévue
 
@@ -79,8 +101,9 @@ Encadrant : M. Ghassen Hamouda.
    git clone https://github.com/Adamminiaoui/campusride-4dasi16-g3.git
    ```
 
-2. Dans IntelliJ IDEA, choisir **File > Open** et sélectionner le dossier `campusride-4dasi16-g3`.
-3. Lors de l’implémentation, initialiser chaque microservice comme projet Spring Boot/Maven dans son dossier existant.
+2. Dans IntelliJ IDEA, choisir **File > Open**, sélectionner le `pom.xml` à la racine et l’ouvrir comme projet.
+3. Si le dossier est déjà ouvert, faire un clic droit sur le `pom.xml` racine et choisir **Add as Maven Project** ou utiliser **Load Maven Project** si cette notification apparaît.
+4. IntelliJ importe le parent, l’agrégateur Backend et les sept modules. Choisir un JDK 17 ou supérieur ; le niveau de compilation Java 17 est défini dans le parent Maven.
 
 ## Collaboration
 
