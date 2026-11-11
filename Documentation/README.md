@@ -2,6 +2,7 @@
 
 - [Présentation de la séance 4](Presentation/CampusRide_Presentation_Seance4_FR.pptx).
 - [Diagramme d’architecture globale](Diagrams/07-architecture-globale.png).
+- [Diagrammes de classes des sept microservices](Diagrams/Diagrammes-de-classes/).
 - [Index des vingt diagrammes du projet](Diagrams/README.md) : cas d’utilisation, séquences, classes, états et dépendances.
 - [Dossier technique Word, version 3](CampusRide_Rapport_technique_v3.docx).
 

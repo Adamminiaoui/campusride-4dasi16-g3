@@ -2,6 +2,8 @@
 
 Les vingt images PNG sont extraites du dossier technique fourni, sans modification. Leur numérotation correspond aux figures du rapport. Elles décrivent la conception prévue et ne constituent pas une preuve d’implémentation.
 
+Les sept [diagrammes de classes](Diagrammes-de-classes/) sont regroupés dans un dossier dédié.
+
 Le [diagramme d’architecture globale](07-architecture-globale.png) présente les composants du projet.
 
 ![Architecture globale de CampusRide](07-architecture-globale.png)
@@ -16,15 +18,15 @@ Le [diagramme d’architecture globale](07-architecture-globale.png) présente l
 | 6 | [sequence annulation trajet](06-sequence-annulation-trajet.png) |
 | 7 | [architecture globale](07-architecture-globale.png) |
 | 8 | [dependances microservices](08-dependances-microservices.png) |
-| 9 | [classes user service](09-classes-user-service.png) |
-| 10 | [classes vehicle driver service](10-classes-vehicle-driver-service.png) |
+| 9 | [classes user service](Diagrammes-de-classes/09-classes-user-service.png) |
+| 10 | [classes vehicle driver service](Diagrammes-de-classes/10-classes-vehicle-driver-service.png) |
 | 11 | [etats verification vehicule](11-etats-verification-vehicule.png) |
-| 12 | [classes ride service](12-classes-ride-service.png) |
+| 12 | [classes ride service](Diagrammes-de-classes/12-classes-ride-service.png) |
 | 13 | [etats trajet](13-etats-trajet.png) |
-| 14 | [classes booking service](14-classes-booking-service.png) |
+| 14 | [classes booking service](Diagrammes-de-classes/14-classes-booking-service.png) |
 | 15 | [etats reservation](15-etats-reservation.png) |
-| 16 | [classes payment service](16-classes-payment-service.png) |
+| 16 | [classes payment service](Diagrammes-de-classes/16-classes-payment-service.png) |
 | 17 | [etats paiement](17-etats-paiement.png) |
-| 18 | [classes review service](18-classes-review-service.png) |
-| 19 | [classes notification service](19-classes-notification-service.png) |
+| 18 | [classes review service](Diagrammes-de-classes/18-classes-review-service.png) |
+| 19 | [classes notification service](Diagrammes-de-classes/19-classes-notification-service.png) |
 | 20 | [sequence authentification acces](20-sequence-authentification-acces.png) |

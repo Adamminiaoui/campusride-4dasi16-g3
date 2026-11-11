@@ -29,8 +29,9 @@ campusride-4dasi16-g3/
 │   ├── Presentation/
 │   │   └── CampusRide_Presentation_Seance4_FR.pptx
 │   ├── Diagrams/
+│   │   ├── Diagrammes-de-classes/ (7 diagrammes)
 │   │   ├── 07-architecture-globale.png
-│   │   └── ... 19 autres diagrammes et leur index
+│   │   └── ... 12 autres diagrammes et leur index
 │   └── CampusRide_Rapport_technique_v3.docx
 ├── .gitattributes
 ├── .gitignore
