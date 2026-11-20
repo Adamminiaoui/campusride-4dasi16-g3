@@ -24,3 +24,6 @@ application-local.yaml
 node_modules/
 dist/
 coverage/
+
+# Projet local de test de connectivite Eureka (ne pas versionner)
+/test-eureka-client/
