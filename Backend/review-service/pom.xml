@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Parent du projet CampusRide -->
+    <!-- Parent Maven du projet CampusRide -->
     <parent>
         <groupId>tn.campusride</groupId>
         <artifactId>campusride-backend</artifactId>
@@ -15,10 +15,8 @@
 
     <!-- Informations du microservice -->
     <artifactId>review-service</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Review Service</name>
-
     <description>
         Microservice de gestion des avis,
         signalements et reputations CampusRide
@@ -45,7 +43,7 @@
 
     <dependencies>
 
-        <!-- Creation des API REST -->
+        <!-- API REST -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -57,11 +55,17 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Connexion MySQL -->
+        <!-- Pilote MariaDB -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Validation des donnees -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- Tests Spring Boot -->
