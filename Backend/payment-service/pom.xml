@@ -4,14 +4,94 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+        PARENT : Spring Boot 4.0.10 imposé par le projet CampusRide.
+        NE PAS modifier la version sans accord de toute l'équipe.
+    -->
     <parent>
-        <groupId>tn.campusride</groupId>
-        <artifactId>campusride-backend</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.10</version>
+        <relativePath/>
     </parent>
 
+    <groupId>tn.campusride</groupId>
     <artifactId>payment-service</artifactId>
-    <packaging>jar</packaging>
-    <name>Payment Service</name>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>payment-service</name>
+    <description>Service de paiement CampusRide — Membre 5</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <!-- Spring Cloud 2025.1.5 imposé par le projet CampusRide -->
+        <spring-cloud.version>2025.1.5</spring-cloud.version>
+    </properties>
+
+    <!--
+        BOM Spring Cloud : importe toutes les versions gérées de Spring Cloud.
+        Permet d'utiliser les starters Spring Cloud SANS préciser de version.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!--
+            spring-boot-starter-web : serveur HTTP embarqué (Tomcat) + Spring MVC.
+            Nécessaire pour exposer les endpoints REST.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+            spring-cloud-starter-netflix-eureka-client : enregistrement automatique
+            du service dans le registre Eureka au démarrage.
+        -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <!--
+            spring-boot-starter-actuator : endpoints /actuator/health, /actuator/info.
+            Utilisé par Eureka pour vérifier la santé du service (health check).
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!--
+            Tests uniquement — scope test.
+            NOTE : JPA, MySQL Driver, Security, Config Client sont intentionnellement
+            ABSENTS à ce stade (ils provoqueraient un échec au démarrage sans
+            base de données ni Config Server disponibles pour l'atelier Eureka).
+            Ils seront ajoutés lors de l'intégration complète du service.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
+
