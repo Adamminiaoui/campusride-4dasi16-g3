@@ -14,19 +14,46 @@ import tn.campusride.review.repository.ReviewRepository;
 import tn.campusride.review.service.ReportService;
 
 import java.util.List;
+import org.springframework.transaction.annotation.Isolation;
+import tn.campusride.review.entity.ReviewStatus;
 
 @Service
 public class ReportServiceImpl implements ReportService {
 
     private final ReportRepository reportRepository;
     private final ReviewRepository reviewRepository;
+    private final ReputationStore reputationStore;
 
     public ReportServiceImpl(
             ReportRepository reportRepository,
-            ReviewRepository reviewRepository) {
+            ReviewRepository reviewRepository, ReputationStore reputationStore) {
 
         this.reportRepository = reportRepository;
         this.reviewRepository = reviewRepository;
+        this.reputationStore = reputationStore;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Report moderateReport(Long id, ReportStatus status) {
+        if (id == null || id <= 0 || status == null || status == ReportStatus.OPEN) {
+            throw new IllegalArgumentException("Decision invalide");
+        }
+        Report report = reportRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Signalement introuvable"));
+        if (report.getStatus() != ReportStatus.OPEN) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Signalement deja traite");
+        }
+        var review = reviewRepository.findForUpdate(report.getReviewId()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Avis introuvable"));
+        if (status == ReportStatus.ACCEPTED) {
+            reputationStore.lock(review.getTargetUserId());
+            review.setStatus(ReviewStatus.HIDDEN);
+            reputationStore.refresh(review.getTargetUserId());
+        }
+        // Dismissal leaves the review unchanged, including an earlier hiding by another report.
+        report.setStatus(status);
+        return reportRepository.saveAndFlush(report);
     }
 
     @Override
@@ -56,7 +83,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // Verifier que l'avis existe
-        if (!reviewRepository.existsById(reviewId)) {
+        if (reviewRepository.findForUpdate(reviewId).isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "Avis introuvable"

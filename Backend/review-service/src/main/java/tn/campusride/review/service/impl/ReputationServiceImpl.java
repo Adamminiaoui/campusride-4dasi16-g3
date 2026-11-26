@@ -46,8 +46,8 @@ public class ReputationServiceImpl implements ReputationService {
             );
         }
 
-        int total = reviews.stream()
-                .mapToInt(Review::getRating)
+        long total = reviews.stream()
+                .mapToLong(Review::getRating)
                 .sum();
 
         BigDecimal average = BigDecimal.valueOf(total)

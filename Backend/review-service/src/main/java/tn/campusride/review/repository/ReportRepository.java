@@ -8,6 +8,7 @@ import tn.campusride.review.entity.ReportStatus;
 import java.util.List;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
+    void deleteByReviewId(Long reviewId);
 
     List<Report> findByStatus(ReportStatus status);
 

@@ -82,4 +82,14 @@ class ReputationServiceImplTest {
 
         verifyNoInteractions(reviewRepository);
     }
+
+    @Test
+    void shouldRoundAverageToTwoDecimals() {
+        Review first = new Review(); first.setRating(5);
+        Review second = new Review(); second.setRating(4);
+        Review third = new Review(); third.setRating(4);
+        when(reviewRepository.findByTargetUserIdAndStatus(5L, ReviewStatus.VISIBLE))
+                .thenReturn(List.of(first, second, third));
+        assertEquals(new BigDecimal("4.33"), reputationService.getReputation(5L).averageRating());
+    }
 }

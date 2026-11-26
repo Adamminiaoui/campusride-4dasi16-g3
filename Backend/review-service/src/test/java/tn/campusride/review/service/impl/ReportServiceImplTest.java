@@ -17,6 +17,8 @@ import tn.campusride.review.repository.ReportRepository;
 import tn.campusride.review.repository.ReviewRepository;
 
 import java.util.List;
+import java.util.Optional;
+import tn.campusride.review.entity.Review;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,8 +42,8 @@ class ReportServiceImplTest {
         CreateReportRequest request =
                 new CreateReportRequest(" Commentaire inapproprie ");
 
-        when(reviewRepository.existsById(10L))
-                .thenReturn(true);
+        when(reviewRepository.findForUpdate(10L))
+                .thenReturn(Optional.of(new Review()));
 
         when(reportRepository.save(any(Report.class)))
                 .thenAnswer(invocation ->
@@ -64,8 +66,8 @@ class ReportServiceImplTest {
     @Test
     void shouldRejectNonExistingReview() {
 
-        when(reviewRepository.existsById(99L))
-                .thenReturn(false);
+        when(reviewRepository.findForUpdate(99L))
+                .thenReturn(Optional.empty());
 
         CreateReportRequest request =
                 new CreateReportRequest("Avis incorrect");
@@ -90,8 +92,8 @@ class ReportServiceImplTest {
     @Test
     void shouldRejectDuplicateReport() {
 
-        when(reviewRepository.existsById(10L))
-                .thenReturn(true);
+        when(reviewRepository.findForUpdate(10L))
+                .thenReturn(Optional.of(new Review()));
 
         when(reportRepository
                 .existsByReviewIdAndReporterId(10L, 2L))

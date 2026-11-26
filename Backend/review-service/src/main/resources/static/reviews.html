@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusRide — Avis</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #172c32; background: #f3f6f5; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { background: #123e3a; color: white; padding: 28px max(24px, calc((100vw - 1120px) / 2)); }
+    .brand { margin: 0 0 10px; color: #a5d7c7; font-size: 14px; letter-spacing: .08em; font-weight: 700; }
+    h1 { margin: 0; font-size: clamp(26px, 4vw, 34px); letter-spacing: -.03em; }
+    header p:last-child { margin: 10px 0 0; color: #d3e4df; }
+    main { max-width: 1168px; margin: 28px auto; padding: 0 24px 32px; }
+    .notice { padding: 13px 18px; background: #fff8df; border: 1px solid #e9dcaa; border-radius: 10px; font-size: 14px; margin-bottom: 22px; }
+    .layout { display: grid; grid-template-columns: minmax(280px, 350px) minmax(0, 1fr); gap: 24px; align-items: start; }
+    .card { min-width: 0; background: white; border: 1px solid #dce5e1; border-radius: 14px; padding: 24px; }
+    h2 { font-size: 20px; margin: 0 0 8px; }
+    .hint { font-size: 14px; color: #53665f; line-height: 1.5; margin: 0 0 20px; }
+    label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 7px; }
+    input, select, textarea, button { font: inherit; }
+    input, select, textarea { width: 100%; border: 1px solid #aebdb5; border-radius: 7px; background: white; color: inherit; padding: 10px 11px; }
+    input:disabled { background: #edf1ef; color: #53665f; }
+    textarea { min-height: 106px; resize: vertical; }
+    .field { margin-bottom: 17px; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    button { border: 1px solid transparent; border-radius: 7px; padding: 10px 15px; background: #166858; color: white; font-weight: 650; cursor: pointer; }
+    button:hover { background: #105243; }
+    button:disabled { opacity: .55; cursor: wait; }
+    :focus-visible { outline: 3px solid #54aa98; outline-offset: 3px; }
+    .secondary { color: #24483e; background: white; border-color: #b6c7be; }
+    .secondary:hover { background: #edf4f0; }
+    .danger { color: #a52a30; background: white; border-color: #e2b8ba; }
+    .danger:hover { background: #fff0f0; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .search { display: flex; align-items: end; gap: 10px; margin: 20px 0; }
+    .search .field { flex: 1; margin: 0; max-width: 240px; }
+    .search button { white-space: nowrap; }
+    .reputation { display: flex; gap: 24px; padding: 16px; background: #edf5f0; border-radius: 9px; margin-bottom: 20px; }
+    .metric { display: block; font-size: 24px; font-weight: 750; }
+    .metric-label { font-size: 13px; color: #53665f; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+    th { color: #586b62; font-size: 12px; padding: 12px 9px; border-bottom: 2px solid #e0e8e3; }
+    td { vertical-align: top; padding: 15px 9px; border-bottom: 1px solid #e6ede9; }
+    td.comment { min-width: 140px; max-width: 240px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    td button { font-size: 12px; padding: 7px 9px; }
+    .empty { color: #61746a; text-align: center; padding: 28px 10px; }
+    #message { margin: 0 0 20px; border-radius: 9px; padding: 13px 16px; border: 1px solid #c0daca; background: #edf8f0; overflow-wrap: anywhere; }
+    #message.error { background: #fff0ee; border-color: #edb9b0; color: #8e2b21; }
+    #message[hidden], [hidden] { display: none !important; }
+    .small { font-size: 12px; color: #60736a; }
+    @media (max-width: 850px) { .layout { grid-template-columns: 1fr; } .search { flex-wrap: wrap; } .card { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="brand">CAMPUSRIDE</p>
+    <h1>Les avis de vos trajets</h1>
+    <p>Créer, consulter, modifier et supprimer un avis.</p>
+  </header>
+  <main>
+    <div class="notice"><strong>Démonstration locale</strong> · Les changements sont enregistrés dans MariaDB. Seul l’auteur de l’avis peut le modifier ou le supprimer.</div>
+    <div id="message" role="status" aria-live="polite" hidden></div>
+    <div class="layout">
+      <section class="card" aria-labelledby="form-title">
+        <h2 id="form-title">Créer un avis</h2>
+        <p class="hint" id="form-help">Choisissez un trajet et la personne à évaluer.</p>
+        <form id="review-form">
+          <div class="two">
+            <div class="field"><label for="rideId">Trajet (rideId)</label><input id="rideId" type="number" min="1" max="9007199254740991" step="1" required placeholder="Ex. 10"></div>
+            <div class="field"><label for="targetUserId">Utilisateur évalué</label><input id="targetUserId" name="targetUserId" type="number" min="1" max="9007199254740991" step="1" required placeholder="Ex. 5"></div>
+          </div>
+          <div class="field"><label for="rating">Note</label><select id="rating" required><option value="">Choisir une note</option value="1">1 / 5</option><option value="2">2 / 5</option><option value="3">3 / 5</option><option value="4">4 / 5</option><option value="5">5 / 5</option></select></div>
+          <div class="field"><label for="comment">Commentaire <span class="small">(facultatif)</span></label><textarea id="comment" maxlength="500" placeholder="Comment s’est passé le trajet ?"></textarea><div class="small">500 caractères maximum.</div></div>
+          <div class="actions"><button id="save" type="submit">Créer l’avis</button><button id="cancel" class="secondary" type="button" hidden>Annuler</button></div>
+        </form>
+      </section>
+      <section class="card" aria-labelledby="list-title">
+        <h2 id="list-title">Avis et réputation</h2>
+        <p class="hint">Consultez les avis visibles reçus par un utilisateur.</p>
+        <form id="search-form" class="search">
+          <div class="field"><label for="userId">Identifiant utilisateur</label><input id="userId" type="number" min="1" max="9007199254740991" step="1" required placeholder="Ex. 5"></div>
+          <button type="submit">Consulter les avis</button>
+        </form>
+        <div class="reputation" aria-live="polite"><div><span id="average" class="metric">— / 5</span><span class="metric-label">Note moyenne</span></div><div><span id="count" class="metric">—</span><span class="metric-label">Avis reçus</span></div></div>
+        <p id="list-context" class="small">Aucun utilisateur sélectionné.</p>
+        <div class="table-wrap">
+          <table aria-label="Avis reçus"><thead><tr><th>Avis / trajet</th><th>Auteur</th><th>Note</th><th>Commentaire</th><th>Actions</th></tr></thead><tbody id="reviews"><tr><td colspan="5" class="empty">Saisissez un utilisateur pour consulter ses avis.</td></tr></tbody></table>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script>
+    'use strict';
+    const $ = id => document.getElementById(id);
+    let editingId = null;
+    let busy = false;
+    let displayedUserId = null;
+
+    function notify(message, error = false) {
+      $('message').textContent = message;
+      $('message').classList.toggle('error', error);
+      $('message').hidden = false;
+    }
+
+    async function api(path, method = 'GET', body) {
+      let response;
+      try {
+        response = await fetch(path, {
+          method, credentials: 'same-origin', cache: 'no-store',
+          headers: { Accept: 'application/json', ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) },
+          ...(body === undefined ? {} : { body: JSON.stringify(body) })
+        });
+      } catch (_) { throw new Error('Le service est injoignable. Vérifiez qu’il est démarré sur localhost:8086.'); }
+      const text = await response.text();
+      let data = null;
+      if (text) { try { data = JSON.parse(text); } catch (_) { /* Error pages are not shown as HTML. */ } }
+      if (!response.ok) {
+        const messages = {
+          400: 'Vérifiez les identifiants, la note (1 à 5) et la longueur du commentaire.',
+          401: 'Authentification requise. Pour la présentation locale, démarrez avec le profil demo.',
+          403: 'Action refusée : vérifiez le profil demo, l’auteur de l’avis et la personne évaluée.',
+          404: 'Cet avis n’existe plus. Consultez à nouveau la liste.',
+          409: 'Un avis existe déjà pour cet auteur, ce trajet et cet utilisateur, ou une modification est en conflit.',
+          503: 'La vérification du trajet est indisponible. Vérifiez que le profil demo est actif.'
+        };
+        throw new Error(`HTTP ${response.status} — ${data?.message || messages[response.status] || 'La requête a échoué.'}`);
+      }
+      if (response.status !== 204 && data === null) throw new Error('Réponse inattendue du service.');
+      return data;
+    }
+
+    async function perform(action) {
+      if (busy) return;
+      busy = true;
+      document.querySelectorAll('button').forEach(button => button.disabled = true);
+      try { await action(); } catch (error) { notify(error.message, true); }
+      finally {
+        busy = false;
+        document.querySelectorAll('button').forEach(button => button.disabled = false);
+      }
+    }
+
+    function resetForm() {
+      editingId = null;
+      $('review-form').reset();
+      $('rideId').disabled = false;
+      $('targetUserId').disabled = false;
+      $('form-title').textContent = 'Créer un avis';
+      $('form-help').textContent = 'Choisissez un trajet et la personne à évaluer.';
+      $('save').textContent = 'Créer l’avis';
+      $('cancel').hidden = true;
+    }
+
+    function cell(row, value, className) {
+      const td = document.createElement('td');
+      td.textContent = value;
+      if (className) td.className = className;
+      row.append(td);
+      return td;
+    }
+
+    function render(reviews) {
+      $('reviews').replaceChildren();
+      if (!reviews.length) {
+        const row = document.createElement('tr');
+        cell(row, 'Aucun avis visible pour cet utilisateur.', 'empty').colSpan = 5;
+        $('reviews').append(row);
+      }
+      for (const review of reviews) {
+        const row = document.createElement('tr');
+        cell(row, `#${review.id} / ${review.rideId}`);
+        cell(row, review.authorId);
+        cell(row, `${review.rating} / 5`);
+        cell(row, review.comment || '—', 'comment');
+        const buttons = document.createElement('div'); buttons.className = 'actions';
+        const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'secondary'; edit.textContent = 'Modifier';
+        edit.setAttribute('aria-label', `Modifier l’avis ${review.id}`);
+        edit.addEventListener('click', () => perform(async () => {
+          const current = await api(`/api/reviews/${review.id}`);
+          editingId = current.id;
+          $('rideId').value = current.rideId; $('rideId').disabled = true;
+          $('targetUserId').value = current.targetUserId; $('targetUserId').disabled = true;
+          $('rating').value = current.rating; $('comment').value = current.comment || '';
+          $('form-title').textContent = `Modifier l’avis #${current.id}`;
+          $('form-help').textContent = 'Modifiez la note ou le commentaire. Le trajet et le destinataire sont conservés.';
+          $('save').textContent = 'Enregistrer'; $('cancel').hidden = false;
+          $('rating').focus();
+          notify(`Avis #${current.id} chargé pour modification.`);
+        }));
+        const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'danger'; remove.textContent = 'Supprimer';
+        remove.setAttribute('aria-label', `Supprimer l’avis ${review.id}`);
+        remove.addEventListener('click', () => {
+          if (busy || !window.confirm(`Supprimer définitivement l’avis #${review.id} ?`)) return;
+          perform(async () => {
+            await api(`/api/reviews/${review.id}`, 'DELETE');
+            if (editingId === review.id) resetForm();
+            notify(`Avis #${review.id} supprimé.`);
+            await refreshAfterWrite(review.targetUserId);
+          });
+        });
+        buttons.append(edit, remove); const actions = document.createElement('td'); actions.append(buttons); row.append(actions);
+        $('reviews').append(row);
+      }
+    }
+
+    async function loadUser(userId) {
+      const [reviews, reputation] = await Promise.all([
+        api(`/api/reviews/user/${userId}`), api(`/api/reviews/reputation/${userId}`)
+      ]);
+      displayedUserId = userId;
+      $('userId').value = userId;
+      $('average').textContent = `${Number(reputation.averageRating).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / 5`;
+      $('count').textContent = reputation.reviewCount;
+      $('list-context').textContent = `Utilisateur #${userId} · Avis visibles`;
+      render(reviews);
+    }
+
+    async function refreshAfterWrite(userId) {
+      try { await loadUser(userId); }
+      catch (error) {
+        $('average').textContent = '— / 5'; $('count').textContent = '—';
+        $('reviews').replaceChildren();
+        $('list-context').textContent = 'Affichage à actualiser.';
+        notify(`L’opération a été enregistrée, mais l’actualisation a échoué : ${error.message}`, true);
+      }
+    }
+
+    $('review-form').addEventListener('submit', event => {
+      event.preventDefault();
+      if (!$('review-form').reportValidity()) return;
+      perform(async () => {
+        const userId = Number($('targetUserId').value);
+        const body = { rating: Number($('rating').value), comment: $('comment').value };
+        const wasEditing = editingId !== null;
+        const saved = wasEditing
+          ? await api(`/api/reviews/${editingId}`, 'PUT', body)
+          : await api('/api/reviews', 'POST', { rideId: Number($('rideId').value), targetUserId: userId, ...body });
+        resetForm();
+        notify(`Avis #${saved.id} ${wasEditing ? 'modifié' : 'créé'} avec succès.`);
+        await refreshAfterWrite(userId);
+      });
+    });
+    $('cancel').addEventListener('click', () => { resetForm(); notify('Modification annulée.'); });
+    $('search-form').addEventListener('submit', event => {
+      event.preventDefault();
+      if (!$('search-form').reportValidity()) return;
+      const userId = Number($('userId').value);
+      perform(async () => {
+        await loadUser(userId);
+        notify(`Avis et réputation de l’utilisateur #${displayedUserId} actualisés.`);
+      });
+    });
+  </script>
+</body>
+</html>

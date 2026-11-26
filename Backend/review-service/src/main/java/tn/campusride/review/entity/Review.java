@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@org.hibernate.annotations.Check(constraints = "rating between 1 and 5")
 @Table(
         name = "reviews",
         uniqueConstraints = @UniqueConstraint(
@@ -32,6 +33,8 @@ public class Review {
     private Long targetUserId;
 
     @Column(nullable = false)
+    @jakarta.validation.constraints.Min(1)
+    @jakarta.validation.constraints.Max(5)
     private Integer rating;
 
     @Column(length = 500)

@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
         )
 )
 public class Report {
+    @Version
+    private Long version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +22,13 @@ public class Report {
 
     @Column(name = "review_id", nullable = false)
     private Long reviewId;
+
+    // Local FK only; user and ride identifiers remain independent of other databases.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id", insertable = false, updatable = false,
+            foreignKey = @ForeignKey(name = "fk_report_review"))
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Review review;
 
     @Column(name = "reporter_id", nullable = false)
     private Long reporterId;

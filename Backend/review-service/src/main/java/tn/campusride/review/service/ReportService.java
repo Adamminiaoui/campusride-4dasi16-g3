@@ -8,6 +8,7 @@ import tn.campusride.review.entity.ReportStatus;
 import java.util.List;
 
 public interface ReportService {
+    Report moderateReport(Long id, ReportStatus status);
 
     Report createReport(
             Long reviewId,
