@@ -1,0 +1,606 @@
+{
+  "info": {
+    "name": "CampusRide Booking CRUD local",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Profil crud. Executer dans l ordre. Les donnees creees sont supprimees a la fin. API locale de demonstration, sans JWT ni orchestration Ride/Payment."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8084"
+    },
+    {
+      "key": "bookingId",
+      "value": ""
+    },
+    {
+      "key": "historyId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Create Booking",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rideId\": 901,\n  \"driverId\": 902,\n  \"passengerId\": 903,\n  \"seats\": 2,\n  \"totalPrice\": 24.5,\n  \"status\": \"PENDING\",\n  \"changedBy\": 903\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"bookingId\", String(pm.response.json().id));",
+              "pm.test(\"Location\", () => pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/dev/bookings/\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Read Booking",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Persisted fields\", () => {const b=pm.response.json();pm.expect(b.status).to.eql(\"PENDING\");pm.expect(Number(b.totalPrice)).to.eql(24.5);pm.expect(b.createdAt).to.be.a(\"string\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 List Bookings",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Booking is listed\", () => pm.expect(pm.response.json().some(b => String(b.id) === pm.collectionVariables.get(\"bookingId\"))).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Initial History",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}/history"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Automatic initial history\", () => {const h=pm.response.json();pm.expect(h.length).to.eql(1);pm.expect(h[0].previousStatus).to.eql(null);pm.expect(h[0].newStatus).to.eql(\"PENDING\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Confirm Booking",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rideId\": 901,\n  \"driverId\": 902,\n  \"passengerId\": 903,\n  \"seats\": 2,\n  \"totalPrice\": 24.5,\n  \"status\": \"CONFIRMED\",\n  \"changedBy\": 903\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Check Transition",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}/history"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Automatic status transition\", () => {const h=pm.response.json();pm.expect(h.length).to.eql(2);pm.expect(h[1].previousStatus).to.eql(\"PENDING\");pm.expect(h[1].newStatus).to.eql(\"CONFIRMED\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Update Without Status Change",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rideId\": 901,\n  \"driverId\": 902,\n  \"passengerId\": 903,\n  \"seats\": 3,\n  \"totalPrice\": 24.5,\n  \"status\": \"CONFIRMED\",\n  \"changedBy\": 903\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 No Duplicate History",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}/history"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"No duplicate transition\", () => pm.expect(pm.response.json().length).to.eql(2));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Create History",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}/history",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"previousStatus\": \"CONFIRMED\",\n  \"newStatus\": \"COMPLETED\",\n  \"changedBy\": 904,\n  \"changedAt\": \"2026-11-25T12:00:00\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"historyId\", String(pm.response.json().id));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Read History",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}/history/{{historyId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Persisted history fields\", () => {const h=pm.response.json();pm.expect(h.changedBy).to.eql(904);pm.expect(h.newStatus).to.eql(\"COMPLETED\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Update History",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}/history/{{historyId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"previousStatus\": \"CONFIRMED\",\n  \"newStatus\": \"CANCELLED\",\n  \"changedBy\": 905,\n  \"changedAt\": \"2026-11-25T13:00:00\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"History updated\", () => {const h=pm.response.json();pm.expect(h.changedBy).to.eql(905);pm.expect(h.newStatus).to.eql(\"CANCELLED\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Manual History Keeps Booking",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Booking status unchanged\", () => pm.expect(pm.response.json().status).to.eql(\"CONFIRMED\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 Reject Zero Seats",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rideId\": 901,\n  \"driverId\": 902,\n  \"passengerId\": 903,\n  \"seats\": 0,\n  \"totalPrice\": 24.5,\n  \"status\": \"PENDING\",\n  \"changedBy\": 903\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+              "pm.test(\"Common error format\", () => pm.expect(pm.response.json()).to.include.all.keys(\"status\",\"error\",\"message\",\"timestamp\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 Reject Unknown Status",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rideId\": 901,\n  \"driverId\": 902,\n  \"passengerId\": 903,\n  \"seats\": 2,\n  \"totalPrice\": 24.5,\n  \"status\": \"WRONG\",\n  \"changedBy\": 903\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 Missing Booking",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/9223372036854775807"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 Delete History",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}/history/{{historyId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17 Deleted History Is Missing",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}/history/{{historyId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "18 Delete Booking",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "19 Deleted Booking Is Missing",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "20 Deleted Booking History Is Missing",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/dev/bookings/{{bookingId}}/history"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

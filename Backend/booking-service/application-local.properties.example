@@ -1,0 +1,4 @@
+# Copier vers application-local.properties (ignore par Git).
+spring.datasource.url=jdbc:mysql://localhost:3306/booking_db
+spring.datasource.username=booking_svc
+spring.datasource.password=REMPLACER_PAR_LE_MOT_DE_PASSE_LOCAL

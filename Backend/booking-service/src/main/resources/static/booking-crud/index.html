@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusRide · Réservations</title>
+  <link rel="stylesheet" href="/booking-crud/styles.css">
+  <script src="/booking-crud/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/crud"><span class="brand-icon" aria-hidden="true">C</span>CampusRide<span class="brand-divider">/</span><span class="brand-section">Booking</span></a><span class="environment"><span></span>Atelier local</span></header>
+  <main>
+    <div class="page-heading"><div><p class="eyebrow">ESPACE DE TEST</p><h1>Les réservations, simplement.</h1><p class="subtitle">Créez une réservation et suivez l’évolution de son statut.</p></div><button id="refresh" class="button secondary" type="button">Actualiser les données</button></div>
+    <p class="demo-note">Données de démonstration · sans connexion aux trajets ni aux paiements. <a href="/crud">Ouvrir le parcours passager simple</a>.</p>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    <nav class="tabs" aria-label="Tables"><button id="bookings-tab" class="tab active" aria-current="page" type="button">Réservations <span id="booking-count">0</span></button><button id="history-tab" class="tab" type="button">Historique des statuts</button></nav>
+
+    <section id="bookings-panel" class="workspace" aria-label="Gestion des réservations">
+      <aside class="card form-card"><div class="card-heading"><span class="section-number">01</span><h2 id="booking-form-title">Nouvelle réservation</h2></div><p class="form-intro">Les dates et les identifiants des réservations sont générés automatiquement.</p>
+        <form id="booking-form">
+          <input id="booking-id" type="hidden">
+          <label for="rideId">Trajet <span>ID</span></label><input id="rideId" name="rideId" type="number" min="1" step="1" max="9007199254740991" required placeholder="Ex. 101">
+          <div class="form-row"><div><label for="driverId">Conducteur <span>ID</span></label><input id="driverId" name="driverId" type="number" min="1" step="1" max="9007199254740991" required placeholder="Ex. 2"></div><div><label for="passengerId">Passager <span>ID</span></label><input id="passengerId" name="passengerId" type="number" min="1" step="1" max="9007199254740991" required placeholder="Ex. 7"></div></div>
+          <div class="form-row"><div><label for="seats">Places</label><input id="seats" name="seats" type="number" min="1" step="1" max="2147483647" value="1" required></div><div><label for="totalPrice">Prix total</label><input id="totalPrice" name="totalPrice" type="number" min="0" max="9999999999.99" step="0.01" required placeholder="Ex. 12.50"></div></div>
+          <label for="status">Statut</label><select id="status" name="status" required><option value="PENDING">PENDING · En attente</option><option value="CONFIRMED">CONFIRMED · Confirmée</option><option value="CANCELLED">CANCELLED · Annulée</option><option value="COMPLETED">COMPLETED · Terminée</option></select>
+          <label for="changedBy">Auteur de l’opération <span>ID</span></label><input id="changedBy" name="changedBy" type="number" min="1" step="1" max="9007199254740991" required placeholder="Ex. 7"><p class="field-help">Utilisé dans l’historique du changement de statut.</p>
+          <button class="button primary full" id="booking-submit" type="submit">Créer la réservation</button><button class="button secondary full" id="booking-reset" type="button">Réinitialiser le formulaire</button>
+        </form>
+      </aside>
+      <div class="card list-card"><div class="list-heading"><div><h2>Toutes les réservations</h2><p>Consultez, modifiez ou ouvrez l’historique d’une réservation.</p></div><label class="search-label"><span class="sr-only">Rechercher une réservation</span><input id="booking-search" type="search" placeholder="Rechercher un ID ou un statut…"></label></div><div class="table-scroll"><table><caption class="sr-only">Liste des réservations</caption><thead><tr><th>ID / Date UTC</th><th>Trajet</th><th>Conducteur / Passager</th><th>Places</th><th>Prix total</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="booking-rows"></tbody></table></div><div id="booking-empty" class="empty-state"><div class="empty-icon" aria-hidden="true">↗</div><h3>Votre première réservation commence ici.</h3><p>Remplissez le formulaire pour ajouter une réservation.</p></div></div>
+    </section>
+
+    <section id="history-panel" hidden aria-label="Gestion de l’historique">
+      <div class="history-selector"><label for="history-booking">Réservation à consulter</label><select id="history-booking"><option value="">Choisir une réservation</option></select><p id="selected-booking-info">Sélectionnez une réservation pour consulter son historique.</p></div>
+      <p class="history-note">Chaque changement de statut ajoute automatiquement une ligne. Cet atelier permet aussi de modifier l’historique pour tester le CRUD ; ces modifications manuelles ne changent pas le statut de la réservation.</p>
+      <div class="workspace"><aside class="card form-card"><div class="card-heading"><span class="section-number">02</span><h2 id="history-form-title">Nouvelle entrée</h2></div><form id="history-form"><fieldset id="history-fields" disabled><input id="history-id" type="hidden">
+        <label for="previousStatus">Ancien statut</label><select id="previousStatus" name="previousStatus"><option value="">Aucun · création</option><option>PENDING</option><option>CONFIRMED</option><option>CANCELLED</option><option>COMPLETED</option></select>
+        <label for="newStatus">Nouveau statut</label><select id="newStatus" name="newStatus" required><option value="">Choisir un statut</option><option>PENDING</option><option>CONFIRMED</option><option>CANCELLED</option><option>COMPLETED</option></select>
+        <label for="history-author">Auteur <span>ID</span></label><input id="history-author" name="changedBy" type="number" min="1" step="1" max="9007199254740991" required placeholder="Ex. 7">
+        <label for="history-date">Date UTC <span>facultative</span></label><input id="history-date" name="changedAt" type="datetime-local" step="1"><p class="field-help">Laissez vide pour utiliser la date actuelle.</p>
+        <button class="button primary full" id="history-submit" type="submit">Ajouter l’entrée</button><button class="button secondary full" id="history-reset" type="button">Réinitialiser le formulaire</button></fieldset></form></aside>
+      <div class="card list-card"><div class="list-heading"><div><h2>Historique de la réservation <span id="history-heading-id"></span></h2><p id="history-count">0 entrée</p></div></div><div class="table-scroll"><table><caption class="sr-only">Historique des statuts</caption><thead><tr><th>ID / Date UTC</th><th>Ancien statut</th><th>Nouveau statut</th><th>Auteur</th><th>Actions</th></tr></thead><tbody id="history-rows"></tbody></table></div><div id="history-empty" class="empty-state"><div class="empty-icon" aria-hidden="true">↻</div><h3>Aucun historique à afficher.</h3><p>Sélectionnez une réservation ou ajoutez une entrée.</p></div></div></div>
+    </section>
+    <footer>CampusRide <span>Booking Service · CRUD local · Dates en UTC</span></footer>
+  </main>
+  <dialog id="delete-dialog"><form method="dialog"><p class="eyebrow">CONFIRMER LA SUPPRESSION</p><h2 id="delete-title">Supprimer cet élément ?</h2><p id="delete-description"></p><div class="dialog-actions"><button class="button secondary" value="cancel">Conserver</button><button class="button danger" value="confirm">Supprimer définitivement</button></div></form></dialog>
+</body>
+</html>

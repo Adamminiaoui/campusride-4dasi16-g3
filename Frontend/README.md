@@ -10,4 +10,8 @@ Emplacement de la future application cliente CampusRide, prévue en HTML5, CSS3 
 | `js/pages/` | Scripts propres à chaque page |
 | `assets/images/` | Images et ressources graphiques |
 
-La future page d’accueil pourra être placée dans `Frontend/index.html`. Le port local envisagé dans le rapport est 5500. Aucun fichier applicatif ni serveur frontend n’est fourni à ce stade.
+La future page d'accueil pourra etre placee dans `Frontend/index.html`. Le port local envisage dans le rapport est 5500.
+
+Une interface de test Booking est disponible sur **http://localhost:8084/crud**, avec le profil `crud`. Ses fichiers se trouvent dans `Backend/booking-service/src/main/resources/static/booking-crud/` et sont servis par Booking ; aucun serveur frontend supplementaire n'est necessaire. Voir le README du Booking Service pour le lancement et MySQL.
+
+Cette page sert uniquement au CRUD local des reservations et de leur historique. Le futur frontend CampusRide utilisera la Gateway et l'authentification selon le rapport.

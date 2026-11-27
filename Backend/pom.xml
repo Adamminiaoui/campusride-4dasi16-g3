@@ -16,6 +16,7 @@
     <name>CampusRide Backend</name>
 
     <modules>
+        <module>eureka-server</module>
         <module>user-service</module>
         <module>vehicle-driver-service</module>
         <module>ride-service</module>
