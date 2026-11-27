@@ -1,0 +1,11 @@
+# Exemple a integrer dans la Gateway existante lorsqu'elle sera disponible.
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: recommendation-service
+              uri: lb://recommendation-service
+              predicates:
+                - Path=/api/recommendations,/api/recommendations/**
