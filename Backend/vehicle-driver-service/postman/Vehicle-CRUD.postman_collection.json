@@ -1,0 +1,74 @@
+{
+  "info": {
+    "name": "CampusRide - Vehicle CRUD",
+    "description": "CRUD de l'entité Vehicle. Le serveur utilise H2 en mémoire par défaut sur le port 8082.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082" },
+    { "key": "vehicleId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1 - Créer un véhicule",
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Création : HTTP 201', function () { pm.response.to.have.status(201); });",
+          "const vehicle = pm.response.json();",
+          "pm.test('La réponse contient un id et le statut PENDING', function () { pm.expect(vehicle.id).to.exist; pm.expect(vehicle.status).to.eql('PENDING'); });",
+          "pm.collectionVariables.set('vehicleId', vehicle.id);"
+        ] }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"driverId\": 1,\n  \"brand\": \"Toyota\",\n  \"model\": \"Yaris\",\n  \"plate\": \"123 TUN 4567\",\n  \"seats\": 5,\n  \"color\": \"Blanche\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/api/vehicles"
+      }
+    },
+    {
+      "name": "2 - Lire tous les véhicules",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('Liste : HTTP 200', function () { pm.response.to.have.status(200); });",
+        "pm.test('La réponse est une liste', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/vehicles" }
+    },
+    {
+      "name": "3 - Lire un véhicule",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('Lecture : HTTP 200', function () { pm.response.to.have.status(200); });",
+        "pm.test('ID retourné correct', function () { pm.expect(pm.response.json().id).to.eql(Number(pm.collectionVariables.get('vehicleId'))); });"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}" }
+    },
+    {
+      "name": "4 - Modifier un véhicule",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('Modification : HTTP 200', function () { pm.response.to.have.status(200); });",
+        "pm.test('Modèle et statut mis à jour', function () { const v = pm.response.json(); pm.expect(v.model).to.eql('Yaris Cross'); pm.expect(v.status).to.eql('VERIFIED'); });"
+      ] } }],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"driverId\": 1,\n  \"brand\": \"Toyota\",\n  \"model\": \"Yaris Cross\",\n  \"plate\": \"123 TUN 4567\",\n  \"seats\": 5,\n  \"color\": \"Blanche\",\n  \"status\": \"VERIFIED\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}"
+      }
+    },
+    {
+      "name": "5 - Supprimer un véhicule",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('Suppression : HTTP 204', function () { pm.response.to.have.status(204); });"
+      ] } }],
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}" }
+    },
+    {
+      "name": "6 - Vérifier véhicule supprimé (404 attendu)",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('Véhicule supprimé : HTTP 404', function () { pm.response.to.have.status(404); });"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}" }
+    }
+  ]
+}
