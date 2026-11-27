@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusRide · Villes</title>
+  <link rel="stylesheet" href="/city-crud/styles.css">
+  <script src="/city-crud/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/crud"><span class="brand-icon" aria-hidden="true">C</span>CampusRide<span class="brand-divider">/</span><span class="brand-section">Ride</span></a><span class="environment"><span></span>Atelier local</span></header>
+  <main>
+    <div class="page-heading"><div><p class="eyebrow">ESPACE DE TEST</p><h1>Les villes, simplement.</h1><p class="subtitle">Gérez les villes de départ et d’arrivée proposées pour les trajets.</p></div><button id="refresh" class="button secondary" type="button">Actualiser les données</button></div>
+    <p class="demo-note">Table de référence <strong>cities</strong> de ride_db · aucune donnée d’un autre microservice.</p>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    <nav class="tabs" aria-label="Tables"><button class="tab active" aria-current="page" type="button">Villes <span id="city-count">0</span></button></nav>
+
+    <section class="workspace" aria-label="Gestion des villes">
+      <aside class="card form-card"><div class="card-heading"><span class="section-number">01</span><h2 id="form-title">Nouvelle ville</h2></div><p class="form-intro">L’identifiant est généré automatiquement. Deux villes ne peuvent pas avoir le même nom.</p>
+        <form id="city-form">
+          <input id="city-id" type="hidden">
+          <label for="name">Nom de la ville</label><input id="name" name="name" maxlength="100" required placeholder="Ex. Hammamet">
+          <label for="governorate">Gouvernorat</label><input id="governorate" name="governorate" maxlength="100" required placeholder="Ex. Nabeul">
+          <button class="button primary full" id="submit" type="submit">Ajouter la ville</button><button class="button secondary full" id="reset" type="button">Réinitialiser le formulaire</button>
+        </form>
+      </aside>
+      <div class="card list-card"><div class="list-heading"><div><h2>Toutes les villes</h2><p>Consultez, modifiez ou supprimez une ville.</p></div><label class="search-label"><span class="sr-only">Rechercher une ville</span><input id="search" type="search" placeholder="Ville ou gouvernorat…"></label></div><div class="table-scroll"><table><caption class="sr-only">Liste des villes</caption><thead><tr><th>ID</th><th>Ville</th><th>Gouvernorat</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div><div id="empty" class="empty-state"><div class="empty-icon" aria-hidden="true">⌖</div><h3>Aucune ville pour l’instant.</h3><p>Ajoutez une ville avec le formulaire.</p></div></div>
+    </section>
+    <footer>CampusRide <span>Ride Service · CRUD local des villes</span></footer>
+  </main>
+  <dialog id="delete-dialog"><form method="dialog"><p class="eyebrow">CONFIRMER LA SUPPRESSION</p><h2 id="delete-title">Supprimer cette ville ?</h2><p>Cette ville sera supprimée définitivement de ride_db.</p><div class="dialog-actions"><button class="button secondary" value="cancel">Conserver</button><button class="button danger" value="confirm">Supprimer définitivement</button></div></form></dialog>
+</body>
+</html>
