@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test User Service - Universités</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 30px auto; }
+        input, button { padding: 6px; margin: 3px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+        #message { margin: 10px 0; font-weight: bold; }
+    </style>
+</head>
+<body>
+<h2>Universités (test CRUD)</h2>
+<div id="message"></div>
+
+<form id="form">
+    <input type="hidden" id="id">
+    <input id="name" placeholder="Nom" required>
+    <input id="city" placeholder="Ville" required>
+    <button type="submit" id="save">Ajouter</button>
+    <button type="button" id="cancel">Annuler</button>
+</form>
+
+<table>
+    <thead><tr><th>ID</th><th>Nom</th><th>Ville</th><th>Actions</th></tr></thead>
+    <tbody id="rows"></tbody>
+</table>
+
+<script>
+    const API = '/api/universities';
+    const $ = id => document.getElementById(id);
+
+    function show(text, ok = true) {
+        $('message').textContent = text;
+        $('message').style.color = ok ? 'green' : 'red';
+    }
+
+    function resetForm() {
+        $('id').value = ''; $('name').value = ''; $('city').value = '';
+        $('save').textContent = 'Ajouter';
+    }
+
+    async function load() {
+        const response = await fetch(API);
+        const list = await response.json();
+        const tbody = $('rows');
+        tbody.innerHTML = '';
+        list.forEach(u => {
+            const tr = document.createElement('tr');
+            [u.id, u.name, u.city].forEach(v => {
+                const td = document.createElement('td');
+                td.textContent = v;
+                tr.appendChild(td);
+            });
+            const actions = document.createElement('td');
+            const edit = document.createElement('button');
+            edit.textContent = 'Modifier';
+            edit.onclick = () => {
+                $('id').value = u.id; $('name').value = u.name; $('city').value = u.city;
+                $('save').textContent = 'Enregistrer';
+            };
+            const del = document.createElement('button');
+            del.textContent = 'Supprimer';
+            del.onclick = () => remove(u.id);
+            actions.append(edit, del);
+            tr.appendChild(actions);
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function remove(id) {
+        const response = await fetch(API + '/' + id, { method: 'DELETE' });
+        show(response.ok ? 'Supprimée (' + response.status + ')' : 'Erreur ' + response.status, response.ok);
+        load();
+    }
+
+    $('form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const id = $('id').value;
+        const response = await fetch(id ? API + '/' + id : API, {
+            method: id ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: $('name').value, city: $('city').value })
+        });
+        show(response.ok ? 'OK (' + response.status + ')' : 'Erreur ' + response.status, response.ok);
+        if (response.ok) { resetForm(); load(); }
+    });
+
+    $('cancel').onclick = resetForm;
+    load();
+</script>
+</body>
+</html>
